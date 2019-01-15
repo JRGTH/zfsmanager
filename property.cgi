@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 require './zfsmanager-lib.pl';
 require './property-list-en.pl';

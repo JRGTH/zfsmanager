@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 require './zfsmanager-lib.pl';
 ReadParse();
@@ -41,6 +41,12 @@ elsif ($in{'cmd'} =~ "activatebe")  {
 	my $cmd = ($config{'bootenv_properties'} =~ /1/) ? "beadm activate ".$in{'zfs'}."".$in{'activatebe'} : undef;
 	$in{'confirm'} = "yes";
 	ui_cmd($in{'activatebe'}, $cmd);
+	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
+}
+elsif ($in{'cmd'} =~ "renamebe")  {
+	my $cmd = ($config{'bootenv_properties'} =~ /1/) ? "beadm rename ".$in{'zfs'}." ".$in{'bootenv'} : undef;
+	$in{'confirm'} = "yes";
+	ui_cmd($in{'renamebe'}, $cmd);
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
 }
 elsif ($in{'cmd'} =~ "destroybe")  {

@@ -23,3 +23,6 @@ Right now its just me developing this. I'm not a programmer by trade, but I'm ha
 ## Thank you
 
 Thank you for stopping by and I hope you enjoy this plugin!
+
+## Standalone module builds for Webmin/FreeBSD
+Latest standalone module builds with Boot Environments support(beadm) can be found [HERE](https://drive.google.com/drive/folders/11P1Sl_mISSSaMJO9bynhwK3aVP65PbKJ)

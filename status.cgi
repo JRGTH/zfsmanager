@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/local/bin/perl
 
 require './zfsmanager-lib.pl';
 ReadParse();
@@ -156,6 +156,9 @@ if ($in{'bootenv'})
 	}
 	if ($config{'bootenv_properties'} =~ /1/) { 
 		print ui_table_row("Create: ", ui_create_bootenv($zfs));
+	}
+	if ($config{'bootenv_properties'} =~ /1/) { 
+		print ui_table_row("Rename: ", ui_rename_bootenv($zfs));
 	}
 	print ui_table_end();
 	ui_print_footer('index.cgi?mode=bootenv', $text{'index_bootenv'});

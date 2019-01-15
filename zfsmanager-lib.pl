@@ -580,6 +580,20 @@ $rv .= ui_form_end();
 return $rv;
 }
 
+sub ui_rename_bootenv
+{
+my ($zfs) = @_;
+$rv = ui_form_start('cmd.cgi', 'post')."\n";
+$rv .= "Rename boot environment: ".$zfs."<br />\n";
+my $date = strftime "zfs_manager_%Y-%m-%d-%H%M%S", localtime;
+$rv .= ui_textbox('bootenv', $date, 28)."\n";
+$rv .= ui_hidden('zfs', $zfs)."\n";
+$rv .= ui_hidden('cmd', "renamebe")."\n";
+$rv .= ui_submit("Rename");
+$rv .= ui_form_end();
+return $rv;
+}
+
 sub ui_cmd
 {
 my ($message, $cmd) = @_;

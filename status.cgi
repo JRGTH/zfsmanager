@@ -136,10 +136,10 @@ if ($in{'bootenv'})
 {
 	ui_print_header(undef, $text{'bootenv_title'}, "", undef, 1, 1);
 	%bootenv = list_bootenvs($in{'bootenv'});
-	print ui_columns_start([ "Name", "Active", "Mountpoint" ]);
+	print ui_columns_start([ "Name", "Active", "Mountpoint", "Space", "Created" ]);
 	foreach $key (sort(keys %bootenv)) 
 	{
-		print ui_columns_row(["<a href='status.cgi?bootenv=$bootenv{$key}{name}'>$bootenv{$key}{name}</a>", $bootenv{$key}{Active}, $bootenv{$key}{Mountpoint} ]);
+		print ui_columns_row(["<a href='status.cgi?bootenv=$bootenv{$key}{name}'>$bootenv{$key}{name}</a>", $bootenv{$key}{active}, $bootenv{$key}{mountpoint}, $bootenv{$key}{space}, $bootenv{$key}{created} ]);
 	}
 	print ui_columns_end();
 
@@ -147,19 +147,17 @@ if ($in{'bootenv'})
 	$zfs =~ s/\@.*//;
 
 	#Tasks table
-	print ui_table_start('Tasks', 'width=100%', undef);
+	print ui_table_start('Tasks for : <i>'.$zfs, 'width=100%', undef);
 	if ($config{'bootenv_properties'} =~ /1/) { 
-		print ui_table_row("Activate: ", ui_activate_bootenv($zfs));
+		print ui_table_row(ui_activate_bootenv($zfs));
+		print ui_table_row(ui_create_bootenv($zfs));
+		print ui_table_row(ui_rename_bootenv($zfs));
+		if ($config{'bootenv_destroy'} =~ /1/) { 
+			print ui_table_row(ui_destroy_bootenv($zfs));
+		}
+		print ui_table_row(ui_mount_bootenv($zfs));
 	}
-	if ($config{'bootenv_destroy'} =~ /1/) { 
-		print ui_table_row("Destroy: ", ui_destroy_bootenv($zfs));
-	}
-	if ($config{'bootenv_properties'} =~ /1/) { 
-		print ui_table_row("Create: ", ui_create_bootenv($zfs));
-	}
-	if ($config{'bootenv_properties'} =~ /1/) { 
-		print ui_table_row("Rename: ", ui_rename_bootenv($zfs));
-	}
+
 	print ui_table_end();
 	ui_print_footer('index.cgi?mode=bootenv', $text{'index_bootenv'});
 }

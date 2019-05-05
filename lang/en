@@ -1,6 +1,6 @@
 index_title=ZFS Manager
 index_root=The root directory is $1.
-index_version=alpha 0.1.5
+index_version=Version 0.1.6a
 index_return=pool list
 snapshot_return=snapshot list
 zfs_return=file system list
@@ -122,5 +122,5 @@ prop_capacity=Percentage of pool space used. This property can also be referred 
 prop_comment=A text string consisting of printable ASCII characters that will be stored such that it is available even if the pool becomes faulted. An administrator can provide additional information about a pool using this property.
 
 #ZFS boot environments
-index_bootenv=boot environments
+index_bootenv=Boot Environments
 bootenv_title=Boot Environments

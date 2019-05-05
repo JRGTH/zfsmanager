@@ -12,4 +12,3 @@ last_send=/root
 list_zpool=size,alloc,free,frag,cap,dedup,health
 list_zfs=used,avail,refer,mountpoint
 list_snap=used,refer
-list_bootenv=Active,Mountpoint,Space

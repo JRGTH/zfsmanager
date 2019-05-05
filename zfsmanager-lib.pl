@@ -130,7 +130,7 @@ while (my $line =<$fh>)
 	chomp ($line);
 	my @props = split("\x09", $line);
 	$ct = 0;
-	foreach $prop (split(",", "name,".$config{'list_bootenv'})) {
+	foreach $prop (split(",", "name,active,mountpoint,space,created" )) {
 		$bootenv{sprintf("%05d", $idx)}{$prop} = $props[$ct];
 		$ct++;
 	}
@@ -519,13 +519,13 @@ $rv .= ui_form_end();
 return $rv;
 }
 
-#List boot environments only
+#List boot environments
 sub ui_list_bootenvs
 {
 my ($bootenv, $admin) = @_;
 %bootenv = list_bootenvs($bootenv);
-@props = split(/,/, $config{list_bootenv});
-print ui_columns_start([ "Name", @props ]);
+@props = split(",", "active,mountpoint,space,created" );
+print ui_columns_start([ "Name", "Active", "Mountpoint", "Space", "Created" ]);
 my $num = 0;
 foreach $key (sort(keys %bootenv))
 {
@@ -546,12 +546,11 @@ sub ui_create_bootenv
 {
 #my ($zfs) = @_;
 $rv = ui_form_start('cmd.cgi', 'post')."\n";
-$rv .= "Enter a name for the boot environment<br />\n";
-my $date = strftime "zfs_manager_%Y-%m-%d-%H%M%S", localtime;
-$rv .= ui_textbox('bootenv', $date, 28)."\n";
+my $date = strftime "bename_%Y-%m-%d-%H%M%S", localtime;
 $rv .= ui_hidden('zfs', $zfs)."\n";
 $rv .= ui_hidden('cmd', "bootenv")."\n";
 $rv .= ui_submit("Create");
+$rv .= ui_textbox('bootenv', $date, 20)."\n";
 $rv .= ui_form_end();
 return $rv;
 }
@@ -560,10 +559,31 @@ sub ui_activate_bootenv
 {
 my ($zfs) = @_;
 $rv = ui_form_start('cmd.cgi', 'post')."\n";
-$rv .= "Activate boot environment: ".$zfs."<br />\n";
 $rv .= ui_hidden('zfs', $zfs)."\n";
 $rv .= ui_hidden('cmd', "activatebe")."\n";
 $rv .= ui_submit("Activate");
+$rv .= "Activate: <i>".$zfs."<br />\n";
+$rv .= ui_form_end();
+return $rv;
+}
+
+sub ui_mount_bootenv
+{
+my ($zfs) = @_;
+my $be_mountcheck = `df | grep $zfs`;
+$rv = ui_form_start('cmd.cgi', 'post')."\n";
+$rv .= ui_hidden('zfs', $zfs)."\n";
+
+if ($be_mountcheck) {
+	$rv .= ui_hidden('cmd', "beunmount")."\n";
+	$rv .= ui_submit("Unmount");
+	$rv .= "Unmount: <i>".$zfs."<br />\n";
+} else {
+	$rv .= ui_hidden('cmd', "mountbe")."\n";
+	$rv .= ui_submit("Mount");
+	$rv .= "Mount: <i>".$zfs."<br />\n";
+}
+
 $rv .= ui_form_end();
 return $rv;
 }
@@ -572,10 +592,10 @@ sub ui_destroy_bootenv
 {
 my ($zfs) = @_;
 $rv = ui_form_start('cmd.cgi', 'post')."\n";
-$rv .= "Destroy boot environment: ".$zfs."<br />\n";
 $rv .= ui_hidden('zfs', $zfs)."\n";
 $rv .= ui_hidden('cmd', "destroybe")."\n";
-$rv .= ui_submit("Destroy");
+$rv .= ui_submit("Delete");
+$rv .= "Destroy: <i>".$zfs."<br />\n";
 $rv .= ui_form_end();
 return $rv;
 }
@@ -584,12 +604,11 @@ sub ui_rename_bootenv
 {
 my ($zfs) = @_;
 $rv = ui_form_start('cmd.cgi', 'post')."\n";
-$rv .= "Rename boot environment: ".$zfs."<br />\n";
-my $date = strftime "zfs_manager_%Y-%m-%d-%H%M%S", localtime;
-$rv .= ui_textbox('bootenv', $date, 28)."\n";
+my $date = strftime "bename_%Y-%m-%d-%H%M%S", localtime;
 $rv .= ui_hidden('zfs', $zfs)."\n";
 $rv .= ui_hidden('cmd', "renamebe")."\n";
 $rv .= ui_submit("Rename");
+$rv .= ui_textbox('bootenv', $date, 20)."\n";
 $rv .= ui_form_end();
 return $rv;
 }

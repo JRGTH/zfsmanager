@@ -49,10 +49,22 @@ elsif ($in{'cmd'} =~ "renamebe")  {
 	ui_cmd($in{'renamebe'}, $cmd);
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
 }
+elsif ($in{'cmd'} =~ "mountbe")  {
+	my $cmd = ($config{'bootenv_properties'} =~ /1/) ? "beadm mount ".$in{'zfs'} : undef;
+	$in{'confirm'} = "yes";
+	ui_cmd($in{'mountbe'}, $cmd);
+	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
+}
+elsif ($in{'cmd'} =~ "beunmount")  {
+	my $cmd = ($config{'bootenv_properties'} =~ /1/) ? "beadm unmount ".$in{'zfs'} : undef;
+	$in{'confirm'} = "yes";
+	ui_cmd($in{'beunmount'}, $cmd);
+	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
+}
 elsif ($in{'cmd'} =~ "destroybe")  {
 	my $cmd = ($config{'bootenv_properties'} =~ /1/) ? "beadm destroy -F ".$in{'zfs'}."".$in{'destroybe'} : undef;
 	$in{'confirm'} = "yes";
-	#if (!$in{'confirm'})
+	#if ($in{'confirm'})
 	#{
 	#	print $text{'cmd_destroy'}." $in{'zfs'}... <br />";
 	#	print "<br />";
@@ -67,9 +79,10 @@ elsif ($in{'cmd'} =~ "destroybe")  {
 	#	print ui_submit($text{'continue'}, undef, undef);
 	#	print ui_form_end();
 	#} else {
+	#	$in{'confirm'} = "yes";
 		ui_cmd($in{'destroybe'}, $cmd);
 	#}
-	#print ui_form_end();
+	print ui_form_end();
 	#^^^ Warning confirmation doesn't work for some reason.
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
 }

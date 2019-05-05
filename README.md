@@ -2,7 +2,7 @@
 
 ZFS administration tool for [Webmin](http://www.webmin.com/).
 
-This is in early development, not for production. That being said, try this out in a virtual machine or anywhere else where data is non-critical. My hope is that this will ultimately provide Webmin with similar ZFS functionality to FreeNAS and XigmaNAS.
+This is in early development, not for production. That being said, try this out in a virtual machine or anywhere else where data is non-critical. My hope is that this will ultimately provide Webmin with similar ZFS functionality to FreeNAS and NAS4Free/XigmaNAS.
 
 This project lives at [GitHub](https://github.com/jonmatifa/zfsmanager), please provide all feedback and bug reports there. I am brand new to Perl and Webmin's API, so first I apologize for the shabby state the code is in, second any further contributions are greatly welcomed. I am learning a fair amount about ZFS along the way as well.
 
@@ -24,5 +24,9 @@ Right now its just me developing this. I'm not a programmer by trade, but I'm ha
 
 Thank you for stopping by and I hope you enjoy this plugin!
 
+
+## About this fork
+This fork of the ZFS Manager Webmin module originally developed by [jonmatifa](https://github.com/jonmatifa/zfsmanager), is an attempt to make it fully optimized for FreeBSD as well as to be fully compliant with ZFS Boot Environments management.
+
 ## Standalone module builds for Webmin/FreeBSD
-Latest standalone module builds with Boot Environments support(beadm) can be found [HERE](https://drive.google.com/drive/folders/11P1Sl_mISSSaMJO9bynhwK3aVP65PbKJ)
+Latest standalone ZFS Manager Webmin module builds with Boot Environments support and management(beadm) can be found [HERE](https://drive.google.com/drive/folders/11P1Sl_mISSSaMJO9bynhwK3aVP65PbKJ)

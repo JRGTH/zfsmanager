@@ -2,4 +2,4 @@ desc=ZFS Manager
 name=ZFS
 longdesc_en=ZFS administration utility for Webmin
 category=hardware
-os_support=*-linux freebsd solaris
+os_support=freebsd

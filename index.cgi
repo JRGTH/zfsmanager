@@ -4,7 +4,7 @@
 require './zfsmanager-lib.pl';
 &ReadParse();
 &ui_print_header(undef, $text{'index_title'}, "", "intro", 1, 1, 0,
-	"<a href='about.cgi'>About ZFS Manager</a><br />".&help_search_link("zfs, zpool, beadm", "man", "doc", "google"), undef, undef, $text{'index_version'} );
+	&help_search_link("zfs zpool beadm", "man", "doc", "google"), undef, undef, $text{'index_version'} );
 
 # Perform some checks if boot environments manager enabled.
 if ($config{'show_bootenv'} =~ /1/) {

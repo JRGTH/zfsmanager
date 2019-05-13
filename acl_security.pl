@@ -1,3 +1,5 @@
+#!/usr/local/bin/perl
+# acl_security.pl
 
 require 'zfsmanager-lib.pl';
 
@@ -5,16 +7,16 @@ require 'zfsmanager-lib.pl';
 sub acl_security_form
 {
 my ($access)=@_;
-print ui_table_row("Destructive pool features",
-	ui_yesno_radio("upool_destroy", $access->{'upool_destroy'}));
-print ui_table_row("Destructive file system features",
-	ui_yesno_radio("uzfs_destroy", $access->{'uzfs_destroy'}));
-print ui_table_row("Destructive snapshot features",
-	ui_yesno_radio("usnap_destroy", $access->{'usnap_destroy'}));
-print ui_table_row("Pool property administration",
-	ui_yesno_radio("upool_properties", $access->{'upool_properties'}));
-print ui_table_row("File system property administration",
-	ui_yesno_radio("uzfs_properties", $access->{'uzfs_properties'}));
+print &ui_table_row("Destructive pool features",
+	&ui_yesno_radio("upool_destroy", $access->{'upool_destroy'}));
+print &ui_table_row("Destructive file system features",
+	&ui_yesno_radio("uzfs_destroy", $access->{'uzfs_destroy'}));
+print &ui_table_row("Destructive snapshot features",
+	&ui_yesno_radio("usnap_destroy", $access->{'usnap_destroy'}));
+print &ui_table_row("Pool property administration",
+	&ui_yesno_radio("upool_properties", $access->{'upool_properties'}));
+print &ui_table_row("File system property administration",
+	&ui_yesno_radio("uzfs_properties", $access->{'uzfs_properties'}));
 }
 
 sub acl_security_save

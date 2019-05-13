@@ -1,12 +1,24 @@
+line1=Configurable options for ZFS Manager,11
 pool_destroy=Destructive pool tasks (zpool destroy),1,1-Enabled,0-Disabled
 zfs_destroy=Destructive file system tasks (zfs destroy),1,1-Enabled,0-Disabled
 snap_destroy=Destructive snapshot tasks (destroy snapshot),1,1-Enabled,0-Disabled
-bootenv_destroy=Destructive boot environment tasks (destroy boot envs),1,1-Enabled,0-Disabled
 pool_properties=Pool administration tasks (create | set properties | configure vdevs),1,1-Enabled,0-Disabled
 zfs_properties=File system administration tasks (create | set properties | mount),1,1-Enabled,0-Disabled
 snap_properties=Snapshot administration tasks (create | send),1,1-Enabled,0-Disabled
 show_snap=Show snapshots tab on index page,1,1-Enabled,0-Disabled
-show_bootenv=Show boot environments tab on index page,1,1-Enabled,0-Disabled
 #list_zpool=Comma delimited list of zpool properties to display,0
 #list_zfs=Comma delimited list of zfs properties to display,0
 #list_snap=Comma delimited list of snapshot properties to display,0
+
+line2=Configurable options for BE Manager,11
+beadm_path=Full path to beadm program,0
+be_mountpath=Full path where to mount boot environments,0
+be_backupdir=Full path where save boot environments,0
+be_compress=Backup compression method,0
+be_decompress=Restore decompress method,0
+zfs_sendparam=ZFS send extra parameters,0
+zfs_recvparam=ZFS recv extra parameters,0
+bootenv_destroy=Destructive boot environment tasks,1,1-Enabled,0-Disabled
+show_beinfo=Show boot environments information,1,1-Enabled,0-Disabled
+bootenv_tasks=Show boot environments tasks,1,1-Enabled,0-Disabled
+show_bootenv=Show boot environments tab on index page,1,1-Enabled,0-Disabled

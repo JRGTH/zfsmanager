@@ -1,7 +1,11 @@
+#!/usr/local/bin/perl
+# zfsmanager-lib.pl
+
 BEGIN { push(@INC, ".."); };
 use WebminCore;
+use File::Path qw/mkpath/;
 use POSIX qw(strftime);
-init_config();
+&init_config();
 foreign_require("mount", "mount-lib.pl");
 my %access = &get_module_acl();
 
@@ -116,27 +120,6 @@ while (my $line =<$fh>)
 	$idx++;
 }
 return %hash;
-}
-
-#List boot environments
-sub list_bootenvs
-{
-my ($bootenv) = @_;
-$list=`beadm list -H`;
-$idx = 0;
-open my $fh, "<", \$list;
-while (my $line =<$fh>)
-{
-	chomp ($line);
-	my @props = split("\x09", $line);
-	$ct = 0;
-	foreach $prop (split(",", "name,active,mountpoint,space,created" )) {
-		$bootenv{sprintf("%05d", $idx)}{$prop} = $props[$ct];
-		$ct++;
-	}
-	$idx++;
-}
-return %bootenv;
 }
 
 sub get_alerts
@@ -315,7 +298,6 @@ my @array = split("\n", `zfs diff -FH $snap`);
 return @array;
 }
 
-
 sub list_disk_ids
 {
 my $byid = '/dev/disk/by-id'; #for linux
@@ -388,14 +370,14 @@ my ($pool, $action)=@_;
 my %zpool = list_zpools($pool);
 if ($action eq undef) { $action = "status.cgi?pool="; }
 @props = split(/,/, $config{list_zpool});
-print ui_columns_start([ "pool name", @props ]);
+print &ui_columns_start([ "pool name", @props ]);
 foreach $key (sort(keys %zpool))
 {
 	@vals = ();
 	foreach $prop (@props) { push (@vals, $zpool{$key}{$prop}); }
-	print ui_columns_row(["<a href='$action$key'>$key</a>", @vals ]);
+	print &ui_columns_row(["<a href='$action$key'>$key</a>", @vals ]);
 }
-print ui_columns_end();
+print &ui_columns_end();
 }
 
 sub ui_zpool_status
@@ -404,12 +386,12 @@ sub ui_zpool_status
 my ($pool, $action) = @_;
 if ($action eq undef) { $action = "status.cgi?pool="; }
 my %zpool = list_zpools($pool);
-print ui_columns_start([ "Pool Name", "Size", "Alloc", "Free", "Frag", "Cap", "Dedup", "Health"]);
+print &ui_columns_start([ "Pool Name", "Size", "Alloc", "Free", "Frag", "Cap", "Dedup", "Health"]);
 foreach $key (keys %zpool)
 {
-	print ui_columns_row(["<a href='$action$key'>$key</a>", $zpool{$key}{size}, $zpool{$key}{alloc}, $zpool{$key}{free}, $zpool{$key}{frag}, $zpool{$key}{cap}, $zpool{$key}{dedup}, $zpool{$key}{health} ]);
+	print &ui_columns_row(["<a href='$action$key'>$key</a>", $zpool{$key}{size}, $zpool{$key}{alloc}, $zpool{$key}{free}, $zpool{$key}{frag}, $zpool{$key}{cap}, $zpool{$key}{dedup}, $zpool{$key}{health} ]);
 }
-print ui_columns_end();
+print &ui_columns_end();
 }
 
 sub ui_zpool_properties
@@ -419,17 +401,17 @@ require './property-list-en.pl';
 my %hash = zpool_get($pool, "all");
 my %props =  property_desc();
 my %properties = pool_properties_list();
-print ui_table_start("Properties", "width=100%", undef);
+print &ui_table_start("Properties", "width=100%", undef);
 foreach $key (sort(keys %{$hash{$pool}}))
 {
 	if (($properties{$key}) || ($props{$key}) || ($text{'prop_'.$key}))
 	{
-		print ui_table_row('<a href="property.cgi?pool='.$pool.'&property='.$key.'">'.$key.'</a>', $hash{$pool}{$key}{value});
+		print &ui_table_row('<a href="property.cgi?pool='.$pool.'&property='.$key.'">'.$key.'</a>', $hash{$pool}{$key}{value});
 	} else {
-	print ui_table_row($key, $hash{$pool}{$key}{value});
+	print &ui_table_row($key, $hash{$pool}{$key}{value});
 	}
 }
-print ui_table_end();
+print &ui_table_end();
 }
 
 sub ui_zfs_list
@@ -438,15 +420,15 @@ my ($zfs, $action)=@_;
 my %zfs = list_zfs($zfs);
 if ($action eq undef) { $action = "status.cgi?zfs="; }
 @props = split(/,/, $config{list_zfs});
-print ui_columns_start([ "file system", @props ]);
+print &ui_columns_start([ "file system", @props ]);
 foreach $key (sort(keys %zfs))
 {
 	@vals = ();
 	if ($zfs{$key}{'mountpoint'}) { $zfs{$key}{'mountpoint'} = "<a href='../filemin/index.cgi?path=".urlize($zfs{$key}{mountpoint})."'>$zfs{$key}{mountpoint}</a>"; }
 	foreach $prop (@props) { push (@vals, $zfs{$key}{$prop}); }
-		print ui_columns_row(["<a href='$action$key'>$key</a>", @vals ]);
+		print &ui_columns_row(["<a href='$action$key'>$key</a>", @vals ]);
 }
-print ui_columns_end();
+print &ui_columns_end();
 }
 
 sub ui_zfs_properties
@@ -457,23 +439,23 @@ my %hash = zfs_get($zfs, "all");
 if (!$hash{$zfs}{'com.sun:auto-snapshot'}) { $hash{$zfs}{'com.sun:auto-snapshot'}{'value'} = '-'; }
 my %props = property_desc();
 my %properties = properties_list();
-print ui_table_start("Properties", "width=100%", undef);
+print &ui_table_start("Properties", "width=100%", undef);
 foreach $key (sort(keys %{$hash{$zfs}}))
 {
 	if (($properties{$key}) || ($props{$key}) || ($text{'prop_'.$key}))
 	{
-		if ($key =~ 'origin') { print ui_table_row('<a href="property.cgi?zfs='.$zfs.'&property='.$key.'">'.$key.'</a>', "<a href='status.cgi?snap=$hash{$zfs}{$key}{value}'>$hash{$zfs}{$key}{value}</a>"); }
+		if ($key =~ 'origin') { print &ui_table_row('<a href="property.cgi?zfs='.$zfs.'&property='.$key.'">'.$key.'</a>', "<a href='status.cgi?snap=$hash{$zfs}{$key}{value}'>$hash{$zfs}{$key}{value}</a>"); }
 		elsif ($key =~ 'clones') {
 			$row = "";
 			@clones = split(',', $hash{$zfs}{$key}{value});
 			foreach $clone (@clones) { $row .= "<a href='status.cgi?zfs=$clone'>$clone</a> "; }
-			print ui_table_row('<a href="property.cgi?zfs='.$zfs.'&property='.$key.'">'.$key.'</a>', $row);
-		} else { print ui_table_row('<a href="property.cgi?zfs='.$zfs.'&property='.$key.'">'.$key.'</a>', $hash{$zfs}{$key}{value}); }
+			print &ui_table_row('<a href="property.cgi?zfs='.$zfs.'&property='.$key.'">'.$key.'</a>', $row);
+		} else { print &ui_table_row('<a href="property.cgi?zfs='.$zfs.'&property='.$key.'">'.$key.'</a>', $hash{$zfs}{$key}{value}); }
 	} else {
-	print ui_table_row($key, $hash{$zfs}{$key}{value});
+	print &ui_table_row($key, $hash{$zfs}{$key}{value});
 	}
 }
-print ui_table_end();
+print &ui_table_end();
 }
 
 sub ui_list_snapshots
@@ -482,157 +464,283 @@ my ($zfs, $admin) = @_;
 %snapshot = list_snapshots($zfs);
 @props = split(/,/, $config{list_snap});
 if ($admin =~ /1/) {
-	print ui_form_start('cmd.cgi', 'post');
-	print ui_hidden('cmd', 'multisnap');
+	print &ui_form_start('cmd.cgi', 'post');
+	print &ui_hidden('cmd', 'multisnap');
 	}
-print ui_columns_start([ "snapshot", @props ]);
+print &ui_columns_start([ "snapshot", @props ]);
 my $num = 0;
 foreach $key (sort(keys %snapshot))
 {
 	@vals = ();
 	foreach $prop (@props) { push (@vals, $snapshot{$key}{$prop}); }
 	if ($admin =~ /1/) {
-		print ui_columns_row([ui_checkbox("select", $snapshot{$key}{name}.";", "<a href='status.cgi?snap=$snapshot{$key}{'name'}'>$snapshot{$key}{'name'}</a>"), @vals ]);
+		print &ui_columns_row([&ui_checkbox("select", $snapshot{$key}{name}.";", "<a href='status.cgi?snap=$snapshot{$key}{'name'}'>$snapshot{$key}{'name'}</a>"), @vals ]);
 		$num ++;
 	} else {
-		print ui_columns_row([ "<a href='status.cgi?snap=$snapshot{$key}{name}'>$snapshot{$key}{name}</a>", @vals ]);
+		print &ui_columns_row([ "<a href='status.cgi?snap=$snapshot{$key}{name}'>$snapshot{$key}{name}</a>", @vals ]);
 	}
 }
-print ui_columns_end();
-if ($admin =~ /1/) { print select_all_link('select', '', "Select All"), " | ", select_invert_link('select', '', "Invert Selection") }
-if (($admin =~ /1/) && ($config{'snap_destroy'} =~ /1/)) { print " | ".ui_submit("Destroy selected snapshots"); }
-if ($admin =~ /1/) { print ui_form_end(); }
+print &ui_columns_end();
+if ($admin =~ /1/) { print &select_all_link('select', '', "Select All"), " | ", &select_invert_link('select', '', "Invert Selection") }
+if (($admin =~ /1/) && ($config{'snap_destroy'} =~ /1/)) { print " | ".&ui_submit("Destroy selected snapshots"); }
+if ($admin =~ /1/) { print &ui_form_end(); }
 
 }
 
 sub ui_create_snapshot
 {
 my ($zfs) = @_;
-$rv = ui_form_start('cmd.cgi', 'post')."\n";
+$rv = &ui_form_start('cmd.cgi', 'post')."\n";
 $rv .= "Create new snapshot based on filesystem: ".$zfs."<br />\n";
 my $date = strftime "zfs_manager_%Y-%m-%d-%H%M", localtime;
-$rv .= $zfs."@ ".ui_textbox('snap', $date, 28)."\n";
-$rv .= ui_hidden('zfs', $zfs)."\n";
-$rv .= ui_hidden('cmd', "snapshot")."\n";
-$rv .= ui_submit("Create");
-$rv .= ui_form_end();
+$rv .= $zfs."@ ".&ui_textbox('snap', $date, 28)."\n";
+$rv .= &ui_hidden('zfs', $zfs)."\n";
+$rv .= &ui_hidden('cmd', "snapshot")."\n";
+$rv .= &ui_submit("Create");
+$rv .= &ui_form_end();
 return $rv;
 }
 
-#List boot environments
+sub get_beadm_version
+{
+my $getversion = "$config{'beadm_path'} version";
+my $version = `$getversion`;
+}
+
+# Gather boot environments information with beadm.
+sub get_be_info
+{
+	my $beinfo = `$config{'beadm_path'} list -a -s`;
+}
+sub check_be_active
+{
+	my ($zfsbe) = @_;
+	my $be_active = `$config{'beadm_path'} list -H | grep ${zfsbe} | grep -wE 'NR|R'`;
+}
+sub check_be_root
+{
+	my ($zfsbe) = @_;
+	my $be_root = `$config{'beadm_path'} list -H | grep ${zfsbe} | grep -wE 'NR|N'`;
+}
+
+# Get boot environment montpoint.
+sub check_be_mount
+{
+	my ($zfsbe) = @_;
+	my $be_mountcheck = `df | grep ${zfsbe}`;
+}
+
+# Get the rootfs and bootfs.
+sub get_zroot_dataset
+{
+	my $rootfs = `mount | awk '\/ \\/ \/ {print \$1}'`;
+	chomp ($rootfs);
+	my $pool = `echo '${rootfs}' | awk -F '\/' '{print \$1}'`;
+	chomp ($pool);
+	my $zroot_dataset = `zpool list -H -o bootfs '${pool}' | sed "s|/[^/]*\$||"`;
+}
+
+# Create backup directory if missing.
+sub create_backup_dir
+{
+	# Check for the backup directory.
+	if ($config{'be_backupdir'}) {
+		$bakupdir = $config{'be_backupdir'};
+		unless(-e $bakupdir or mkpath $bakupdir) {
+			# Fallback to external command.
+			`mkdir -p $bakupdir`;
+			}
+		}
+	else {
+		die "Backup directory not defined\n";
+		}
+}
+
+sub remove_mount_dir
+{
+	if ($config{'be_mountpath'}) {
+		my $be_mountpoint = "$config{'be_mountpath'}/$in{'zfsbe'}_BE";
+		unless( !-e $be_mountpoint or rmdir $be_mountpoint) {
+			# Fallback to external command.
+			`rm -rf $be_mountpoint`;
+			}
+		}
+}
+
+# List boot environments.
+sub list_bootenvs
+{
+my ($bootenv) = @_;
+$list=`$config{'beadm_path'} list -H`;
+$idx = 0;
+open my $fh, "<", \$list;
+while (my $line =<$fh>)
+{
+	chomp ($line);
+	my @props = split("\x09", $line);
+	$ct = 0;
+	foreach $prop (split(",", "name,active,mountpoint,space,created" )) {
+		$bootenv{sprintf("%05d", $idx)}{$prop} = $props[$ct];
+		$ct++;
+	}
+	$idx++;
+}
+return %bootenv;
+}
+
+# UI list boot environments.
 sub ui_list_bootenvs
 {
 my ($bootenv, $admin) = @_;
 %bootenv = list_bootenvs($bootenv);
 @props = split(",", "active,mountpoint,space,created" );
-print ui_columns_start([ "Name", "Active", "Mountpoint", "Space", "Created" ]);
+print &ui_columns_start([ "$text{'colprop_name'}", "$text{'colprop_active'}", "$text{'colprop_mountdir'}", "$text{'colprop_space'}", "$text{'colprop_created'}" ]);
 my $num = 0;
 foreach $key (sort(keys %bootenv))
 {
 	@vals = ();
 	foreach $prop (@props) { push (@vals, $bootenv{$key}{$prop}); }
-	if ($admin =~ /1/) {
-		print ui_columns_row([ "<a href='status.cgi?bootenv=$bootenv{$key}{name}'>$bootenv{$key}{name}</a>", @vals ]);
+	if ($config{'bootenv_tasks'} =~ /1/) {
+		print &ui_columns_row([ "<a href='status.cgi?bootenv=$bootenv{$key}{'name'}'>$bootenv{$key}{'name'}</a>", @vals ]);
 		$num ++;
 	} else {
-		print ui_columns_row([ "<a href='status.cgi?bootenv=$bootenv{$key}{name}'>$bootenv{$key}{name}</a>", @vals ]);
+		print &ui_columns_row([ $bootenv{$key}{'name'}, @vals ]);
 	}
 }
-print ui_columns_end();
-if ($admin =~ /1/) { print ui_form_end(); }
+print &ui_columns_end();
+print &ui_form_end();
 }
 
 sub ui_create_bootenv
 {
-#my ($zfs) = @_;
-$rv = ui_form_start('cmd.cgi', 'post')."\n";
+#my ($zfsbe) = @_;
+$rv = &ui_form_start('cmd.cgi', 'post')."\n";
 my $date = strftime "bename_%Y-%m-%d-%H%M%S", localtime;
-$rv .= ui_hidden('zfs', $zfs)."\n";
-$rv .= ui_hidden('cmd', "bootenv")."\n";
-$rv .= ui_submit("Create");
-$rv .= ui_textbox('bootenv', $date, 20)."\n";
-$rv .= ui_form_end();
+$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
+$rv .= &ui_hidden('cmd', "bootenv")."\n";
+$rv .= &ui_submit("$text{'button_create'}");
+$rv .= &ui_textbox('bootenv', $date, 20)."\n";
+$rv .= "$text{'blabel_newbe'}<br />\n";
+$rv .= &ui_form_end();
 return $rv;
 }
 
 sub ui_activate_bootenv
 {
-my ($zfs) = @_;
-$rv = ui_form_start('cmd.cgi', 'post')."\n";
-$rv .= ui_hidden('zfs', $zfs)."\n";
-$rv .= ui_hidden('cmd', "activatebe")."\n";
-$rv .= ui_submit("Activate");
-$rv .= "Activate: <i>".$zfs."<br />\n";
-$rv .= ui_form_end();
+my ($zfsbe) = @_;
+if (check_be_active($zfsbe)) {
+	$state_act = "disable";
+	}
+
+$rv = &ui_form_start('cmd.cgi', 'post')."\n";
+$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
+$rv .= &ui_hidden('cmd', "activatebe")."\n";
+$rv .= &ui_submit("$text{'button_activate'}", state => "${state_act}");
+$rv .= "$text{'blabel_activate'} <i>".$zfsbe."<br />\n";
+$rv .= &ui_form_end();
 return $rv;
 }
 
 sub ui_mount_bootenv
 {
-my ($zfs) = @_;
-my $be_mountcheck = `df | grep $zfs`;
-$rv = ui_form_start('cmd.cgi', 'post')."\n";
-$rv .= ui_hidden('zfs', $zfs)."\n";
+my ($zfsbe) = @_;
+if (check_be_root($zfsbe)) {
+	$state_mnt = "disable";
+	}
 
-if ($be_mountcheck) {
-	$rv .= ui_hidden('cmd', "beunmount")."\n";
-	$rv .= ui_submit("Unmount");
-	$rv .= "Unmount: <i>".$zfs."<br />\n";
+$rv = &ui_form_start('cmd.cgi', 'post')."\n";
+$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
+
+if (check_be_mount($zfsbe)) {
+	$rv .= &ui_hidden('cmd', "beunmount")."\n";
+	$rv .= &ui_submit("$text{'button_unmount'}", state => "${state_mnt}");
+	$rv .= "$text{'blabel_unmount'} <i>".$zfsbe."<br />\n";
 } else {
-	$rv .= ui_hidden('cmd', "mountbe")."\n";
-	$rv .= ui_submit("Mount");
-	$rv .= "Mount: <i>".$zfs."<br />\n";
+	$rv .= &ui_hidden('cmd', "mountbe")."\n";
+	$rv .= &ui_submit("$text{'button_mount'}", state => "${state_mnt}");
+	$rv .= "$text{blabel_mount} <i>".$zfsbe."<br />\n";
 }
 
-$rv .= ui_form_end();
-return $rv;
-}
-
-sub ui_destroy_bootenv
-{
-my ($zfs) = @_;
-$rv = ui_form_start('cmd.cgi', 'post')."\n";
-$rv .= ui_hidden('zfs', $zfs)."\n";
-$rv .= ui_hidden('cmd', "destroybe")."\n";
-$rv .= ui_submit("Delete");
-$rv .= "Destroy: <i>".$zfs."<br />\n";
-$rv .= ui_form_end();
+$rv .= &ui_form_end();
 return $rv;
 }
 
 sub ui_rename_bootenv
 {
-my ($zfs) = @_;
-$rv = ui_form_start('cmd.cgi', 'post')."\n";
+my ($zfsbe) = @_;
+$rv = &ui_form_start('cmd.cgi', 'post')."\n";
 my $date = strftime "bename_%Y-%m-%d-%H%M%S", localtime;
-$rv .= ui_hidden('zfs', $zfs)."\n";
-$rv .= ui_hidden('cmd', "renamebe")."\n";
-$rv .= ui_submit("Rename");
-$rv .= ui_textbox('bootenv', $date, 20)."\n";
-$rv .= ui_form_end();
+$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
+$rv .= &ui_hidden('cmd', "renamebe")."\n";
+$rv .= &ui_submit("$text{'button_rename'}");
+$rv .= &ui_textbox('bootenv', $date, 20)."\n";
+$rv .= "$text{'blabel_rename'} <i>".$zfsbe."<br />\n";
+$rv .= &ui_form_end();
+return $rv;
+}
+
+sub ui_backup_bootenv
+{
+my ($zfsbe) = @_;
+$rv = &ui_form_start('cmd.cgi', 'post')."\n";
+$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
+$rv .= &ui_hidden('cmd', "backupbe")."\n";
+$rv .= &ui_submit("$text{'button_backup'}");
+$rv .= "$text{'blabel_backup'} <i>".$zfsbe."<br />\n";
+$rv .= &ui_form_end();
+return $rv;
+}
+
+sub ui_restore_bootenv
+{
+my ($zfsbe) = @_;
+$rv = &ui_form_start('cmd.cgi', 'post')."\n";
+$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
+$rv .= &ui_hidden('cmd', "restorebe")."\n";
+$rv .= &ui_submit("$text{'button_restore'}");
+$rv .= &ui_filebox('befile')."\n";
+$rv .= "$text{'blabel_restore'}<br />\n";
+$rv .= &ui_form_end();
+return $rv;
+}
+
+sub ui_destroy_bootenv
+{
+my ($zfsbe) = @_;
+if (check_be_active($zfsbe) || check_be_root($zfsbe)) {
+	$state_del = "disable";
+	}
+
+$rv = &ui_form_start('cmd.cgi', 'post')."\n";
+$rv .= &ui_hidden('zfsbe', $zfsbe)."\n";
+$rv .= &ui_hidden('cmd', "destroybe")."\n";
+$rv .= &ui_submit("$text{'button_delete'}", state => "${state_del}");
+$rv .= "$text{'blabel_delete'} <i>".$zfsbe."<br />\n";
+$rv .= &ui_checkbox('force', '-f', "$text{'blabel_force'}");
+$rv .= &ui_form_end();
 return $rv;
 }
 
 sub ui_cmd
 {
 my ($message, $cmd) = @_;
-print "$text{'cmd_'.$in{'cmd'}} $message $text{'cmd_with'}<br />\n";
+print "$text{'cmd_'.$in{'cmd'}} $message $text{'index_withcmd'}<br />\n";
 print "<i># ".$cmd."</i><br /><br />\n";
 if (!$in{'confirm'}) {
-	print ui_form_start('cmd.cgi', 'post');
+	print &ui_form_start('cmd.cgi', 'post');
 	foreach $key (keys %in) {
-		print ui_hidden($key, $in{$key});
+		print &ui_hidden($key, $in{$key});
 	}
-	print "<h3>Would you lke to continue?</h3>\n";
-	print ui_submit("yes", "confirm", 0)."<br />";
-	print ui_form_end();
+	print "<h3>$text{'index_continue'}</h3>\n";
+	print &ui_submit("$text{'button_yes'}", "confirm", 0)."<br />";
+	print &ui_form_end();
 } else {
 	@result = (`$cmd 2>&1`);
 	if (!$result[0])
 	{
-		print "Success! <br />\n";
+		print "$text{'index_success'} <br />\n";
 	} else	{
-	print "<b>output: </b>".$result[0]."<br />\n";
+	print "<b>$text{'index_output'} </b>".$result[0]."<br />\n";
 	foreach $key (@result[1..@result]) {
 		print $key."<br />\n";
 	}
@@ -647,13 +755,13 @@ my ($message, $cmd) = @_;
 $rv = "Attempting to $message with command... <br />\n";
 $rv .= "<i># ".$cmd."</i><br /><br />\n";
 if (!$in{'confirm'}) {
-	$rv .= ui_form_start('cmd.cgi', 'post');
+	$rv .= &ui_form_start('cmd.cgi', 'post');
 	foreach $key (keys %in) {
-		$rv .= ui_hidden($key, $in{$key});
+		$rv .= &ui_hidden($key, $in{$key});
 	}
 	$rv .= "<h3>Would you lke to continue?</h3>\n";
-	$rv .= ui_submit("yes", "confirm", 0)."<br />";
-	$rv .= ui_form_end();
+	$rv .= &ui_submit("yes", "confirm", 0)."<br />";
+	$rv .= &ui_form_end();
 } else {
 	@result = (`$cmd 2>&1`);
 	if (!$result[0]) {

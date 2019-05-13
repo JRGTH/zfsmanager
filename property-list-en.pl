@@ -1,6 +1,9 @@
+#!/usr/local/bin/perl
+# property-list-en.pl
+
 BEGIN { push(@INC, ".."); };
 use WebminCore;
-init_config();
+&init_config();
 
 sub property_desc
 #deprecated, migrate all to lang/en

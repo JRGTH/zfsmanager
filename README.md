@@ -28,5 +28,8 @@ Thank you for stopping by and I hope you enjoy this plugin!
 ## About this fork
 This fork of the ZFS Manager Webmin module originally developed by [jonmatifa](https://github.com/jonmatifa/zfsmanager), is an attempt to make it fully optimized for FreeBSD as well as to be fully compliant with ZFS Boot Environments management.
 
-## Standalone module builds for Webmin/FreeBSD
-Latest standalone ZFS Manager Webmin module builds with Boot Environments support and management(beadm) can be found [HERE](https://drive.google.com/drive/folders/11P1Sl_mISSSaMJO9bynhwK3aVP65PbKJ)
+## ZFS Manager testing builds for Webmin/FreeBSD
+Latest ZFS Manager Webmin module testing builds with Boot Environments support and management(beadm) can be found [HERE](https://drive.google.com/drive/folders/11P1Sl_mISSSaMJO9bynhwK3aVP65PbKJ)
+
+## Standalone Boot Environments Manager for Webmin/FreeBSD
+Latest Boot Environments Manager(beadm) Webmin module can be found [HERE](https://sourceforge.net/projects/boot-envs-manager-for-webmin/)

@@ -126,7 +126,7 @@ prop_comment=A text string consisting of printable ASCII characters that will be
 # ZFS Boot Environments
 index_betitle=Boot Environments
 index_bootenv=Boot Environments
-index_beinfo=BE Information
+index_beinfo=Information
 index_errbeadm=The beadm program $1 was not found on your system. Maybe beadm is not installed, or your <a href='$2'>module configuration</a> is incorrect.
 index_errmountpath=The boot environments mount path is not defined, or your <a href='$2'>module configuration</a> is incorrect.
 index_errbackupdir=The boot environments backup directory is not defined, or your <a href='$2'>module configuration</a> is incorrect.

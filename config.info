@@ -19,6 +19,5 @@ be_decompress=Restore decompress method,0
 zfs_sendparam=ZFS send extra parameters,0
 zfs_recvparam=ZFS recv extra parameters,0
 bootenv_destroy=Destructive boot environment tasks,1,1-Enabled,0-Disabled
-show_beinfo=Show boot environments information,1,1-Enabled,0-Disabled
 bootenv_tasks=Show boot environments tasks,1,1-Enabled,0-Disabled
 show_bootenv=Show boot environments tab on index page,1,1-Enabled,0-Disabled

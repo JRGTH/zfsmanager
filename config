@@ -17,6 +17,5 @@ be_decompress=xz -c -d
 zfs_sendparam=
 zfs_recvparam=
 bootenv_destroy=0
-show_beinfo=1
 bootenv_tasks=1
 show_bootenv=1

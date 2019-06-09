@@ -515,12 +515,12 @@ sub get_be_info
 sub check_be_active
 {
 	my ($zfsbe) = @_;
-	my $be_active = `$config{'beadm_path'} list -H | grep ${zfsbe} | awk '{print $2}' | grep -wE 'NR|R'`;
+	my $be_active = `$config{'beadm_path'} list -H | grep ${zfsbe} | awk '{print \$2}' | grep -wE 'NR|R'`;
 }
 sub check_be_root
 {
 	my ($zfsbe) = @_;
-	my $be_root = `$config{'beadm_path'} list -H | grep ${zfsbe} | awk '{print $2}' | grep -wE 'NR|N'`;
+	my $be_root = `$config{'beadm_path'} list -H | grep ${zfsbe} | awk '{print \$2}' | grep -wE 'NR|N'`;
 }
 
 # Get boot environment montpoint.

@@ -12,8 +12,8 @@ list_snap=used,refer
 beadm_path=/usr/local/sbin/beadm
 be_mountpath=
 be_backupdir=
-be_compress=xz -0 -v --threads=0
-be_decompress=xz -c -d --threads=0
+be_compress=-0 -v --threads=0
+be_decompress=-c -d
 zfs_sendparam=
 zfs_recvparam=
 bootenv_destroy=0

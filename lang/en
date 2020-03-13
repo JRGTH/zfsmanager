@@ -146,6 +146,7 @@ index_createmsg=Creating new BE
 index_notes=Notes:
 index_notebackup=Make sure the backup directory is a permanent data location with plenty of storage space.
 index_notetasks=Some tasks such backups and restore may take some time until completes, depending on compression level and size.
+index_noteprocess=If an zfs send/receive process is currently running on any boot environment, said buttons will be temporarily disabled until task completes.
 
 button_yes=yes
 button_continue=Continue

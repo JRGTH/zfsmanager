@@ -5,10 +5,10 @@ BEGIN { push(@INC, ".."); };
 use WebminCore;
 &init_config();
 
-sub property_desc
 #deprecated, migrate all to lang/en
+sub property_desc
 {
-my %hash = ( 'aclmode' => 'Controls how an ACL is modified during chmod(2). A file system with
+	my %hash = ( 'aclmode' => 'Controls how an ACL is modified during chmod(2). A file system with
 	   an  "aclmode" property of "discard" deletes all ACL entries that do
 	   not represent the mode  of  the  file.  An  "aclmode"  property  of
 	   "groupmask"	(the  default)	reduces user or group permissions. The
@@ -592,5 +592,5 @@ Unprivileged users can only access their own groups\' space usage. The root user
        though this should be done with extreme care. The global  administrator
        should  verify that all the mount points are acceptable before clearing
        the property.');
-return %hash;
+	return %hash;
 }

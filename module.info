@@ -1,5 +1,6 @@
 desc=ZFS Manager
-name=ZFS
+name=ZFS Manager
 longdesc_en=ZFS administration utility for Webmin
 category=hardware
 os_support=freebsd
+version=0.1.7a

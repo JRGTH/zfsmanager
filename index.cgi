@@ -15,7 +15,7 @@ if ($config{'show_bootenv'} =~ /1/) {
 			"$gconfig{'webprefix'}/config.cgi?$module_name"),"<p>\n";
 		&ui_print_footer("/", $text{"index"});
 		exit;
-		}
+	}
 
 	# Check if BE mount dir is defined.
 	if (!($config{'be_mountpath'})) {
@@ -24,7 +24,7 @@ if ($config{'show_bootenv'} =~ /1/) {
 			"$gconfig{'webprefix'}/config.cgi?$module_name"),"<p>\n";
 		&ui_print_footer("/", $text{"index"});
 		exit;
-		}
+	}
 
 	# Check if BE backup dir is defined.
 	if (!($config{'be_backupdir'})) {
@@ -33,14 +33,14 @@ if ($config{'show_bootenv'} =~ /1/) {
 			"$gconfig{'webprefix'}/config.cgi?$module_name"),"<p>\n";
 		&ui_print_footer("/", $text{"index"});
 		exit;
-		}
+	}
 
 	# Get beadm version.
 	my $version = &get_beadm_version();
 	if (!$version == "blank") {
 		# Write version file.
 		&write_file("$module_config_directory/version", {""},$version);
-		}
+	}
 }
 
 # Start tabs.
@@ -51,7 +51,7 @@ if ($config{'show_snap'} =~ /1/) { push(@tabs, [ "snapshot", "Snapshots", "index
 
 if ($config{'show_bootenv'} =~ /1/) {
 	push(@tabs, [ "bootenv", "$text{'index_bootenv'}", "index.cgi?mode=bootenv" ]);
-	}
+}
 
 print &ui_tabs_start(\@tabs, "mode", $in{'mode'} || $tabs[0]->[0], 1);
 

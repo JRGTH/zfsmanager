@@ -3,7 +3,6 @@
 
 BEGIN { push(@INC, ".."); };
 use WebminCore;
-use File::Path qw/mkpath/;
 use POSIX qw(strftime);
 &init_config();
 foreign_require("mount", "mount-lib.pl");
@@ -536,7 +535,7 @@ sub create_backup_dir
 	# Check for the backup directory.
 	if ($config{'be_backupdir'}) {
 		$bakupdir = $config{'be_backupdir'};
-		unless(-e $bakupdir or mkpath $bakupdir) {
+		unless(-e $bakupdir or mkdir $bakupdir) {
 			&backquote_command("mkdir -p $bakupdir");
 		}
 	} else {

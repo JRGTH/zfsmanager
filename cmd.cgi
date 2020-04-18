@@ -35,33 +35,42 @@ elsif ($in{'cmd'} =~ "snapshot")  {
 }
 
 if ($in{'cmd'} =~ "bootenv")  {
-	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "beadm create ".$in{'zfsbe'}."".$in{'bootenv'} : undef;
+	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "$config{'beadm_path'} create ".$in{'zfsbe'}."".$in{'bootenv'} : undef;
 	$in{'confirm'} = "yes";
 	&ui_cmd($in{'bootenv'}, $cmd);
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
 }
 elsif ($in{'cmd'} =~ "activatebe")  {
-	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "beadm activate ".$in{'zfsbe'}."".$in{'activatebe'} : undef;
+	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "$config{'beadm_path'} activate ".$in{'zfsbe'}."".$in{'activatebe'} : undef;
 	$in{'confirm'} = "yes";
 	&ui_cmd($in{'activatebe'}, $cmd);
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
 }
 elsif ($in{'cmd'} =~ "renamebe")  {
-	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "beadm rename ".$in{'zfsbe'}." ".$in{'bootenv'} : undef;
+	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "$config{'beadm_path'} rename ".$in{'zfsbe'}." ".$in{'bootenv'} : undef;
 	$in{'confirm'} = "yes";
 	&ui_cmd($in{'renamebe'}, $cmd);
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
 }
 elsif ($in{'cmd'} =~ "mountbe")  {
 	my $be_mountpoint = "$config{'be_mountpath'}/$in{'zfsbe'}_BE";
-	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "beadm mount ".$in{'zfsbe'}." ${be_mountpoint} ".$in{'mountbe'} : undef;
+
+	if ($config{'be_mountpath'}) {
+	unless(-e $be_mountpoint or mkdir $be_mountpoint, 0700) {
+			&backquote_command("mkdir -p -m 0700 $be_mountpoint");
+		}
+	} else {
+		die "Mountpoint directory not defined\n";
+	}
+
+	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "$config{'beadm_path'} mount ".$in{'zfsbe'}." ${be_mountpoint} ".$in{'mountbe'} : undef;
 	$in{'confirm'} = "yes";
 	&ui_cmd($in{'mountbe'}, $cmd);
 	@footer = ("index.cgi?mode=bootenv", $text{'index_bootenv'});
 }
 elsif ($in{'cmd'} =~ "beunmount")  {
 	my $be_mountpoint = "$config{'be_mountpath'}/$in{'zfsbe'}_BE";
-	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "beadm unmount ".$in{'zfsbe'}."".$in{'beunmount'} : undef;
+	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "$config{'beadm_path'} unmount ".$in{'zfsbe'}."".$in{'beunmount'} : undef;
 	$in{'confirm'} = "yes";
 	&ui_cmd($in{'beunmount'}, $cmd);
 	&remove_mount_dir();
@@ -77,7 +86,7 @@ elsif ($in{'cmd'} =~ "destroybe")  {
 		$sayyes = "echo 'y' |";
 		}
 
-	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "${sayyes} beadm destroy ${forceopt} ".$in{'zfsbe'}."".$in{'destroybe'} : undef;
+	my $cmd = ($config{'bootenv_tasks'} =~ /1/) ? "${sayyes} $config{'beadm_path'} destroy ${forceopt} ".$in{'zfsbe'}."".$in{'destroybe'} : undef;
 	$in{'confirm'} = "yes";
 	#if ($in{'confirm'})
 	#{
